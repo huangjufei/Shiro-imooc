@@ -16,7 +16,6 @@
     <aop:config proxy-target-class="true" />
 
     <bean class="org.apache.shiro.spring.LifecycleBeanPostProcessor">
-
     </bean>
 
     <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor" id="authorizationAttributeSourceAdvisor">
