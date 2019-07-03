@@ -56,6 +56,7 @@ public class CustomRealm extends AuthorizingRealm {
         }
         //封装返回对象AuthenticationInfo
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo("sun", password, "customRealm");
+        //设置加盐的字符串必须和数据库的一致
         simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("zaq"));
         return simpleAuthenticationInfo;
     }

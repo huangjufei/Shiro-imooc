@@ -27,7 +27,7 @@ public class CustomRealmTest {
         defaultSecurityManager.setRealm(customRealm);
         //这里和加密相关
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
-        matcher.setHashIterations(1);
+        matcher.setHashIterations(1);//加密次数
         matcher.setHashAlgorithmName("md5");
         customRealm.setCredentialsMatcher(matcher);
 
