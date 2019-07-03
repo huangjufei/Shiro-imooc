@@ -18,6 +18,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
+/**
+ *  其实 JdbcRealm 也是继承 AuthorizingRealm
+ *  public class JdbcRealm extends AuthorizingRealm
+ */
 public class CustomRealm extends AuthorizingRealm {
 
     Map<String, String> userMap = new HashMap();
@@ -25,6 +30,7 @@ public class CustomRealm extends AuthorizingRealm {
     Set<String> permissions = new HashSet<String>();
 
     {
+        //模拟数据源(开发这里来至数据库)
         userMap.put("sun", "1d7b217127d82ea1eac7e3b92090a463");
         roles.add("admin");
         roles.add("user");
@@ -33,18 +39,43 @@ public class CustomRealm extends AuthorizingRealm {
         super.setName("customRealm");
     }
 
+
+
+    /**
+     * Authentication
+     * 用户认证(效验账号密码)
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        // 1. 从主体获取提交的认证信息
+        String username = (String) authenticationToken.getPrincipal();
+        //  从数据库验证(模拟)
+        String password = getPasswordByUsername(username);
+        if (password == null) {
+            return null;
+        }
+        //封装返回对象AuthenticationInfo
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo("sun", password, "customRealm");
+        simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("zaq"));
+        return simpleAuthenticationInfo;
+    }
+
+
+    /**
+     * Authorization
+     * 用户授权认证(访问权限)
+     */
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 
         String username = (String) principalCollection.getPrimaryPrincipal();
-//        从数据库或者缓存中获取角色信息
+        //模拟从数据库获取角色和permission信息
         Set<String> roles = getRolesByUsername(username);
         Set<String> permissions = getRolesByPermissions(username);
-
-
+        //封装返回对象AuthorizationInfo
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         simpleAuthorizationInfo.setStringPermissions(permissions);
         simpleAuthorizationInfo.setRoles(roles);
-
         return simpleAuthorizationInfo;
     }
 
@@ -56,26 +87,14 @@ public class CustomRealm extends AuthorizingRealm {
         return roles;
     }
 
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-
-        // 1. 从主体获取提交的认证信息
-        String username = (String) authenticationToken.getPrincipal();
-
-        // 1. 从数据库验证(模拟)
-        String password = getPasswordByUsername(username);
-        if (password == null) {
-            return null;
-        }
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo("sun", password, "customRealm");
-        simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("zaq"));
-        return simpleAuthenticationInfo;
-    }
-
     private String getPasswordByUsername(String username) {
         return userMap.get(username);
     }
 
 
+    /**
+     * 测试密码通过md5加盐方式加密
+     */
     public static void main(String args[]) {
 //        Md5Hash md5Hash = new Md5Hash("123");
         Md5Hash md5Hash = new Md5Hash("123", "zaq");

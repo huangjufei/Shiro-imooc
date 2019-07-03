@@ -9,6 +9,11 @@ import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 
+
+/**
+ * step 3
+ * JdbcRealm : 数据库作为数据源(需要创建数据库test.sql)
+ */
 public class JdbcRealmTest {
 
 
@@ -16,27 +21,23 @@ public class JdbcRealmTest {
     {
         dataSource.setUrl("jdbc:mysql://localhost:3306/test");
         dataSource.setUsername("root");
-        dataSource.setPassword("");
+        dataSource.setPassword("hjf,.123");
     }
-
 
     private JdbcRealm jdbcRealm = new JdbcRealm();
 
-
     @Test
     public void test() {
-//      1 构建SecurityManager
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
 
-//    5 Realm验证
         jdbcRealm.setDataSource(dataSource);
         defaultSecurityManager.setRealm(jdbcRealm);
         jdbcRealm.setPermissionsLookupEnabled(true);
 
-        String userSql = "select password from test_user where username = ?";
+        String userSql = "select password from users where username = ?";
         jdbcRealm.setAuthenticationQuery(userSql);
 
-        String roleSql = "select role_name from test_user_roles where username = ?";
+      String roleSql = "select role_name from test_user_roles where username = ?";
         jdbcRealm.setUserRolesQuery(roleSql);
 
         String permSql = "select permission from test_roles_permissions where role_name = ?";
@@ -46,16 +47,11 @@ public class JdbcRealmTest {
         SecurityUtils.setSecurityManager(defaultSecurityManager);
         Subject subject = SecurityUtils.getSubject();
 
-//     3 securityManager进行认证
         UsernamePasswordToken token = new UsernamePasswordToken("sun", "123");
-//     4   Authentication认证
-
         subject.login(token);
 
         System.out.println("isAuthenticated: " + subject.isAuthenticated());
-
         subject.checkRoles("admin", "user");
-
         subject.checkPermissions("user:add", "admin:update");
     }
 

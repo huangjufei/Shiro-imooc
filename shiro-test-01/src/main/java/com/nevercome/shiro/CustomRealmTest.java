@@ -10,35 +10,35 @@ import org.apache.shiro.subject.Subject;
 import org.junit.Before;
 import org.junit.Test;
 
+
+/**
+ * step 4
+ * 自定义
+ * 其实 JdbcRealm 也是继承 AuthorizingRealm
+ * public class JdbcRealm extends AuthorizingRealm
+ */
 public class CustomRealmTest {
 
     @Test
     public void test() {
-//      1 构建SecurityManager
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
-
-        //    5 Realm验证
+        // 自定义realm
         CustomRealm customRealm = new CustomRealm();
         defaultSecurityManager.setRealm(customRealm);
+        //这里和加密相关
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
         matcher.setHashIterations(1);
         matcher.setHashAlgorithmName("md5");
         customRealm.setCredentialsMatcher(matcher);
 
-
-//      2 Subject提交认证请求
         SecurityUtils.setSecurityManager(defaultSecurityManager);
         Subject subject = SecurityUtils.getSubject();
 
-//     3 securityManager进行认证
         UsernamePasswordToken token = new UsernamePasswordToken("sun", "123");
-//     4   Authentication认证
-
         subject.login(token);
-
         System.out.println("isAuthenticated: " + subject.isAuthenticated());
 
-//        subject.checkRoles("admin", "user");
-//        subject.checkPermissions("user:add", "admin:add");
+        subject.checkRoles("admin", "user");
+        subject.checkPermissions("user:add", "admin:add");
     }
 }

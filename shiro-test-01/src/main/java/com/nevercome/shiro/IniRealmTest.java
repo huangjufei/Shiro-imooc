@@ -9,6 +9,11 @@ import org.apache.shiro.subject.Subject;
 import org.junit.Before;
 import org.junit.Test;
 
+
+/**
+ * step 2
+ * IniRealm :通过文件的方式进行测试
+ */
 public class IniRealmTest {
 
 
@@ -16,26 +21,23 @@ public class IniRealmTest {
 
     @Test
     public void test() {
-//      1 构建SecurityManager
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
 
-//    5 Realm验证
         defaultSecurityManager.setRealm(iniRealm);
 
-//      2 Subject提交认证请求
         SecurityUtils.setSecurityManager(defaultSecurityManager);
         Subject subject = SecurityUtils.getSubject();
 
-//     3 securityManager进行认证
-        UsernamePasswordToken token = new UsernamePasswordToken("sun", "123");
-//     4   Authentication认证
+        UsernamePasswordToken token = new UsernamePasswordToken("huangjufei", "1234");
 
         subject.login(token);
 
         System.out.println("isAuthenticated: " + subject.isAuthenticated());
-
         subject.checkRoles("admin", "user");
 
         subject.checkPermission("user:delete");
+        subject.checkPermission("a:c");
+        subject.checkPermission("a");
+
     }
 }
