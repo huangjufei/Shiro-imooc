@@ -27,7 +27,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
     }
 
     public V get(K k) throws CacheException {
-        System.out.println("从RedisCache中获取授权信息");
+        System.out.println("从RedisCache中获取授权信息~~~~~~~~~~");
         byte[] value = jedisUtil.get(getKey(k));
         if (value != null) {
             return (V) SerializationUtils.deserialize(value);
@@ -39,7 +39,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
         byte[] key = getKey(k);
         byte[] value = SerializationUtils.serialize(v);
         jedisUtil.set(key, value);
-        jedisUtil.expire(key, 600);
+        jedisUtil.expire(key, 600);// 10分钟过期
         return v;
     }
 

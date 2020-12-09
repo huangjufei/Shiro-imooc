@@ -1,0 +1,17 @@
+1,先从test项目的第一天看起,然后到web项目
+web项目需要启动后通过访问localhost:8080\login.html来走流程
+2,web项目会在web.xml中配置shiro 的过滤器filter
+3,配置spring-context.xml,其实主要就是一个filter,和SecurityManager并注入realm,realm中包含认证和授权;所以你会了
+realm的操作就占了大部分
+4,该项目的配置文件架构都是值得学习的,清晰简单明了
+5,userDaoImpl 重写了这个方法(返回对象的封装), T mapRow(ResultSet var1, int var2) throws SQLException;
+6,如果让shiro使用让会话,需要缓存,这里使用redis来实现AbstractSessionDAO 的抽象方法,shiro会在需要的时候自动调这些方法
+7,通过RedisCacheManager来缓存我们的授权信息,作用也是少查数据库(可选)
+8,rememberMe是单点登录,但是目前没看出效果
+
+
+总结:当web,看不懂时去看test项目
+shiro 认证流程:
+创建securityManager-主体提交认证-securityManager认证-Authenticator认证-Realm验证
+shiro 授权流程
+创建securityManager-主体提交授权-securityManager授权-Authenticator授权-Realm获取角色权限数据

@@ -9,6 +9,10 @@ import org.apache.shiro.web.session.mgt.WebSessionKey;
 import javax.servlet.ServletRequest;
 import java.io.Serializable;
 
+
+/**
+ * 使用自定义SessionManager主要原因是,默认的会查多次redis,当前你忽略redis这点性能可以使用默认的
+ */
 public class CustomSessionManager extends DefaultWebSessionManager {
 
     @Override
@@ -16,7 +20,7 @@ public class CustomSessionManager extends DefaultWebSessionManager {
         Serializable sessionId = getSessionId(sessionKey);
 
         ServletRequest request = null;
-
+        //WebSessionKey是shiro的类
         if (sessionKey instanceof WebSessionKey) {
             request = ((WebSessionKey) sessionKey).getServletRequest();
         }

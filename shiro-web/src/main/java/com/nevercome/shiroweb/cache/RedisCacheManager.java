@@ -5,6 +5,10 @@ import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+/**
+ * 在配置文件直接引入它
+ */
 public class RedisCacheManager implements CacheManager {
 
     @Autowired

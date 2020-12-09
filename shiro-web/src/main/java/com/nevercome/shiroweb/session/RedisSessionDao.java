@@ -13,6 +13,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/**
+ * 如果让shiro使用让会话,需要缓存,这里使用redis来实现AbstractSessionDAO 的抽象方法,shiro会在需要的时候自动
+ * 来调这些方法
+ * 代码中使用请直接注入RedisSessionDao而不是JedisUtil
+ */
 public class RedisSessionDao extends AbstractSessionDAO {
 
     @Autowired

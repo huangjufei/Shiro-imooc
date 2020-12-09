@@ -12,10 +12,15 @@ import org.junit.Test;
 
 
 /**
- * step 4
- * 自定义
- * 其实 JdbcRealm 也是继承 AuthorizingRealm
- * public class JdbcRealm extends AuthorizingRealm
+ * 第4天
+ * 自定义realm
+ * 模仿 JdbcRealm 也是继承 AuthorizingRealm(public class CustomRealm extends AuthorizingRealm)
+ * 这里看不懂时请看第3天
+ *
+ *
+ *   subject.login(token)核心对比流程分析:
+ *   请在AuthenticatingRealm类的getAuthenticationInfo()方法上打一个断点,这里会调用我们自定义的CustomRealm
+ *   的doGetAuthenticationInfo(),从而得到数据库的用户信息
  */
 public class CustomRealmTest {
 
@@ -35,7 +40,7 @@ public class CustomRealmTest {
         Subject subject = SecurityUtils.getSubject();
 
         UsernamePasswordToken token = new UsernamePasswordToken("sun", "123");
-        subject.login(token);
+        subject.login(token);//核心点,流程解释请看上面
         System.out.println("isAuthenticated: " + subject.isAuthenticated());
 
         subject.checkRoles("admin", "user");

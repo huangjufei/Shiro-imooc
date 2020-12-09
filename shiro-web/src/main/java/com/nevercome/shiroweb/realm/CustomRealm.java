@@ -16,43 +16,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+
+/**
+ * 从数据库中获取用户的账号,密码(认证);获取用户的角色和资源(授权)
+ */
 public class CustomRealm extends AuthorizingRealm {
 
     @Autowired
     private UserDao userDao;
-//    Map<String, String> userMap = new HashMap();
-//    Set<String> roles = new HashSet<String>();
-//    Set<String> permissions = new HashSet<String>();
-//    {
-//        userMap.put("sun", "1d7b217127d82ea1eac7e3b92090a463");
-//        roles.add("admin");
-//        roles.add("user");
-//        permissions.add("user:add");
-//        permissions.add("admin:add");
-//        super.setName("customRealm");
-//    }
 
+
+    /**
+     * 授权
+     * 根据当前用户去数据库获取当前用户的角色和资源权限
+     * @param principalCollection
+     * @return
+     */
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-
         String username = (String) principalCollection.getPrimaryPrincipal();
-//        从数据库或者缓存中获取角色信息
         Set<String> roles = getRolesByUsername(username);
         Set<String> permissions = getPermissionsByUsername(username);
-
-
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         simpleAuthorizationInfo.setStringPermissions(permissions);
         simpleAuthorizationInfo.setRoles(roles);
-
         return simpleAuthorizationInfo;
     }
 
+    /**
+     * 认证
+     * 根据当前用户名去数据库获取当前用户的密码和用户
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-
         // 1. 从主体获取提交的认证信息
         String username = (String) authenticationToken.getPrincipal();
-
-        // 1. 从数据库验证(模拟)
         String password = getPasswordByUsername(username);
         if(password == null) {
             return null;
@@ -63,6 +62,7 @@ public class CustomRealm extends AuthorizingRealm {
     }
 
     private String getPasswordByUsername(String username) {
+        System.out.println("~~~~从数据库中获取-password-");
         User user = userDao.getUserByUsername(username);
         if(user != null) {
             return user.getPassword();
@@ -71,13 +71,14 @@ public class CustomRealm extends AuthorizingRealm {
     }
 
     private Set<String> getRolesByUsername(String username) {
-        System.out.println("从数据库中获取授权信息");
+        System.out.println("~~~~从数据库中获取-roles-授权信息");
         List<String> list = userDao.getRolesByUsername(username);
         Set<String> roles = new HashSet<String>(list);
         return roles;
     }
 
     private Set<String> getPermissionsByUsername(String username) {
+        System.out.println("~~~~从数据库中获取-permission-授权信息");
         List<String> list = userDao.getPermissionsByUsername(username);
         Set<String> permissions = new HashSet<String>(list);
         return permissions;
@@ -85,7 +86,6 @@ public class CustomRealm extends AuthorizingRealm {
 
 
     public static void main(String args[]) {
-//        Md5Hash md5Hash = new Md5Hash("123");
         Md5Hash md5Hash = new Md5Hash("123", "zaq");
         System.out.println(md5Hash.toString());
     }

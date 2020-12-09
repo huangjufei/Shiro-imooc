@@ -11,7 +11,8 @@ import org.junit.Test;
 
 
 /**
- * step 2
+ * 第2天
+ * realm
  * IniRealm :通过文件的方式进行测试
  */
 public class IniRealmTest {
@@ -34,7 +35,7 @@ public class IniRealmTest {
 
         System.out.println("isAuthenticated: " + subject.isAuthenticated());
         subject.checkRoles("admin", "user");
-
+        //可以发现subject可以,校验认证(账号,密码),授权(角色,资源)
         subject.checkPermission("user:delete");
         subject.checkPermission("a:c");
         subject.checkPermission("a");

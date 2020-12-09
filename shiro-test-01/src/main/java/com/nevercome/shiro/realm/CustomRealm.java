@@ -20,14 +20,15 @@ import java.util.Set;
 
 
 /**
- *  其实 JdbcRealm 也是继承 AuthorizingRealm
- *  public class JdbcRealm extends AuthorizingRealm
+ * 自定义 CustomRealm 需要继承 AuthorizingRealm
+ * <p>
+ * 主要就是重写两个方法:一个认证,一个授权;它们没有必然联系
  */
 public class CustomRealm extends AuthorizingRealm {
 
-    Map<String, String> userMap = new HashMap();
-    Set<String> roles = new HashSet<String>();
-    Set<String> permissions = new HashSet<String>();
+    Map<String, String> userMap = new HashMap();//模拟用户表
+    Set<String> roles = new HashSet<String>();//模拟角色表
+    Set<String> permissions = new HashSet<String>();//模拟权限表
 
     {
         //模拟数据源(开发这里来至数据库)
@@ -38,7 +39,6 @@ public class CustomRealm extends AuthorizingRealm {
         permissions.add("admin:add");
         super.setName("customRealm");
     }
-
 
 
     /**
@@ -55,8 +55,8 @@ public class CustomRealm extends AuthorizingRealm {
             return null;
         }
         //封装返回对象AuthenticationInfo
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo("sun", password, "customRealm");
-        //设置加盐的字符串必须和数据库的一致
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(username, password, "customRealm");
+        //设置证书加盐的字符串必须和数据库的一致
         simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("zaq"));
         return simpleAuthenticationInfo;
     }
@@ -80,14 +80,15 @@ public class CustomRealm extends AuthorizingRealm {
         return simpleAuthorizationInfo;
     }
 
+    //本来该从数据库中去获取,现在直接从缓存中返回
     private Set<String> getRolesByPermissions(String username) {
         return permissions;
     }
-
+    //本来该从数据库中去获取,现在直接从缓存中返回
     private Set<String> getRolesByUsername(String username) {
         return roles;
     }
-
+    //本来该从数据库中去获取,现在直接从缓存中返回
     private String getPasswordByUsername(String username) {
         return userMap.get(username);
     }
@@ -97,8 +98,8 @@ public class CustomRealm extends AuthorizingRealm {
      * 测试密码通过md5加盐方式加密
      */
     public static void main(String args[]) {
-//        Md5Hash md5Hash = new Md5Hash("123");
-        Md5Hash md5Hash = new Md5Hash("123", "zaq");
+        // Md5Hash md5Hash = new Md5Hash("123");
+        Md5Hash md5Hash = new Md5Hash("123", "zaq");  //密码和盐
         System.out.println(md5Hash.toString());
     }
 }
